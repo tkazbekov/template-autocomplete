@@ -3,7 +3,7 @@ import { Editor, EditorState, Modifier, SelectionState } from "draft-js";
 import "draft-js/dist/Draft.css";
 import "./TextEditor.css";
 import SuggestionDropdown from "../SuggestionDropdown/SuggestionDropdown";
-import { getCaretCoordinates } from "../../utils";
+import { getCaretCoordinates, getMatchString } from "../../utils";
 import { suggestionDecorator } from "../../utils/decorators/autocomplete-suggestion";
 
 const SUGGESTIONS = [
@@ -14,14 +14,6 @@ const SUGGESTIONS = [
   "hello world",
   "draft-js example",
 ];
-
-const getMatchString = (
-  text: string,
-  selectionOffset: number
-): string | null => {
-  const match = /<>(.*)$/.exec(text.slice(0, selectionOffset));
-  return match ? match[1] : null;
-};
 
 const TextEditor: React.FC = () => {
   const editorRef = useRef<Editor | null>(null);

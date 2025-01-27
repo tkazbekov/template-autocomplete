@@ -13,3 +13,10 @@ export function getCaretCoordinates(): { x: number; y: number } {
   return { x: 0, y: 0 };
 }
 
+export function getMatchString(
+  text: string,
+  selectionOffset: number
+): string | null {
+  const match = /<>(.*)$/.exec(text.slice(0, selectionOffset));
+  return match ? match[1] : null;
+}
