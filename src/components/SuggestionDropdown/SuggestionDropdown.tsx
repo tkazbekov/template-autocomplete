@@ -8,6 +8,7 @@ interface SuggestionDropdownProps {
   position: DropdownPosition;
   onSelect: (suggestion: string) => void;
   onHover: (index: number) => void;
+  loading: boolean;
 }
 
 const SuggestionDropdown: React.FC<SuggestionDropdownProps> = ({
@@ -16,8 +17,9 @@ const SuggestionDropdown: React.FC<SuggestionDropdownProps> = ({
   position,
   onSelect,
   onHover,
+  loading,
 }) => {
-  if (suggestions.length === 0) return null;
+  if (!loading && suggestions.length === 0) return null;
 
   return (
     <div
@@ -25,20 +27,22 @@ const SuggestionDropdown: React.FC<SuggestionDropdownProps> = ({
       style={{ top: position.y, left: position.x }}
     >
       <ul className="suggestions-list">
-        {suggestions.map((suggestion, index) => (
-          <li
-            key={suggestion}
-            className={
-              index === selectedIndex
-                ? "highlighted suggestion-item"
-                : "suggestion-item"
-            }
-            onMouseDown={() => onSelect(suggestion)}
-            onMouseEnter={() => onHover(index)}
-          >
-            {suggestion}
-          </li>
-        ))}
+        {loading && <li className="loading">Loading...</li>}
+        {!loading &&
+          suggestions.map((suggestion, index) => (
+            <li
+              key={suggestion}
+              className={
+                index === selectedIndex
+                  ? "highlighted suggestion-item"
+                  : "suggestion-item"
+              }
+              onMouseDown={() => onSelect(suggestion)}
+              onMouseEnter={() => onHover(index)}
+            >
+              {suggestion}
+            </li>
+          ))}
       </ul>
     </div>
   );

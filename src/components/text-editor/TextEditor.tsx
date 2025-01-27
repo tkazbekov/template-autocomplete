@@ -7,15 +7,6 @@ import useAutocomplete from "./useAutocomplete";
 import useDropdownPosition from "./useDropdownPosition";
 import { suggestionDecorator } from "../../utils/decorators/autocomplete-suggestion";
 
-const SUGGESTIONS = [
-  "test",
-  "hello",
-  "world",
-  "draft-js",
-  "hello world",
-  "draft-js example",
-];
-
 const TextEditor: React.FC = () => {
   const editorRef = useRef<Editor | null>(null);
   const [editorState, setEditorState] = React.useState(() =>
@@ -30,7 +21,8 @@ const TextEditor: React.FC = () => {
     updateSuggestionsState,
     handleSuggestionSelected,
     handleEscape,
-  } = useAutocomplete(editorState, setEditorState, SUGGESTIONS);
+    loading,
+  } = useAutocomplete(editorState, setEditorState);
 
   const { dropdownPosition, updateDropdownPosition } = useDropdownPosition();
 
@@ -77,6 +69,7 @@ const TextEditor: React.FC = () => {
         break;
 
       case "Enter":
+      case "Tab": // Treat Tab like Enter when suggestions are present
         e.preventDefault();
         if (suggestions.length > 0) {
           handleSuggestionSelected(suggestions[selectedIndex]);
@@ -84,8 +77,8 @@ const TextEditor: React.FC = () => {
         break;
 
       case "Escape":
-        handleEscape(); // Call the hook's handleEscape function
-        editorRef.current?.focus(); // Optionally refocus the editor
+        handleEscape();
+        editorRef.current?.focus();
         break;
 
       default:
@@ -102,13 +95,14 @@ const TextEditor: React.FC = () => {
           onChange={handleEditorChange}
           placeholder="Type <> to trigger suggestions"
         />
-        {activeSuggestion && suggestions.length > 0 && (
+        {(loading || (activeSuggestion && suggestions.length > 0)) && (
           <SuggestionDropdown
             suggestions={suggestions}
             selectedIndex={selectedIndex}
             position={dropdownPosition}
             onSelect={handleSuggestionSelected}
             onHover={setSelectedIndex}
+            loading={loading}
           />
         )}
       </div>

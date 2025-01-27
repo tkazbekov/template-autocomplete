@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { EditorState, Modifier, SelectionState } from "draft-js";
 import { getMatchString } from "../../utils";
+import { fetchSuggestions } from "../../api/suggestionsApi";
 
 type UseAutocompleteReturn = {
   activeSuggestion: string | null;
@@ -10,36 +11,47 @@ type UseAutocompleteReturn = {
   updateSuggestionsState: (text: string, selectionOffset: number) => void;
   handleSuggestionSelected: (suggestion: string) => void;
   handleEscape: () => void;
+  loading: boolean;
 };
 
 const useAutocomplete = (
   editorState: EditorState,
-  setEditorState: React.Dispatch<React.SetStateAction<EditorState>>,
-  suggestionsSource: string[]
+  setEditorState: React.Dispatch<React.SetStateAction<EditorState>>
 ): UseAutocompleteReturn => {
   const [activeSuggestion, setActiveSuggestion] = useState<string | null>(null);
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const resetAutocompleteState = () => {
     setActiveSuggestion(null);
     setSuggestions([]);
     setSelectedIndex(0);
+    setLoading(false);
   };
 
-  const updateSuggestionsState = (text: string, selectionOffset: number) => {
+  const updateSuggestionsState = async (
+    text: string,
+    selectionOffset: number
+  ) => {
     const currentMatchString = getMatchString(text, selectionOffset);
 
     if (currentMatchString !== null) {
-      const matchingSuggestions = suggestionsSource.filter((s) =>
-        s.toLowerCase().startsWith(currentMatchString.toLowerCase())
-      );
+      setLoading(true);
 
-      if (currentMatchString !== activeSuggestion) {
-        setActiveSuggestion(currentMatchString);
+      try {
+        const fetchedSuggestions = await fetchSuggestions(currentMatchString);
+        if (currentMatchString !== activeSuggestion) {
+          setActiveSuggestion(currentMatchString);
+        }
+        setSuggestions(fetchedSuggestions);
+        setSelectedIndex(0);
+      } catch (error) {
+        console.error("Failed to fetch suggestions:", error);
+        resetAutocompleteState();
+      } finally {
+        setLoading(false);
       }
-      setSuggestions(matchingSuggestions);
-      setSelectedIndex(0);
     } else {
       resetAutocompleteState();
     }
@@ -105,7 +117,8 @@ const useAutocomplete = (
     setSelectedIndex,
     updateSuggestionsState,
     handleSuggestionSelected,
-    handleEscape, // don't want to export resetAutocompleteState directly
+    handleEscape,
+    loading,
   };
 };
 

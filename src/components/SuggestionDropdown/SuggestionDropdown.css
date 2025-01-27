@@ -28,3 +28,8 @@
   color: var(--color-autocomplete-entry-text);
   border-radius: 2px;
 }
+.loading {
+  font-style: italic;
+  color: var(--color-text-secondary);
+  padding: 0.5rem 0.75rem;
+}
