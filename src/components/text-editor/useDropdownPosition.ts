@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { getCaretCoordinates } from "../../utils";
 import { DropdownPosition } from "../../types/common";
 
@@ -8,15 +8,10 @@ const useDropdownPosition = () => {
     y: 0,
   });
 
-  const updateDropdownPosition = () => {
+  const updateDropdownPosition = useCallback(() => {
     const coordinates = getCaretCoordinates();
-    if (
-      coordinates.x !== dropdownPosition.x ||
-      coordinates.y !== dropdownPosition.y
-    ) {
-      setDropdownPosition(coordinates);
-    }
-  };
+    setDropdownPosition(coordinates);
+  }, []);
 
   return {
     dropdownPosition,

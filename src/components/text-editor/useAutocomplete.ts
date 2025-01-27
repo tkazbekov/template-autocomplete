@@ -65,7 +65,6 @@ const useAutocomplete = (
       // Update autocomplete state
       setActiveSuggestion(currentMatchString);
       setSuggestions(fetchedSuggestions);
-      
       setSelectedIndex(0);
     } catch (error) {
       console.error("Error fetching suggestions:", error);

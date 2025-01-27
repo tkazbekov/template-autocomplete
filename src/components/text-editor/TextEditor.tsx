@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useEffect } from "react";
 import { Editor, EditorState } from "draft-js";
 import "draft-js/dist/Draft.css";
 import "./TextEditor.css";
@@ -26,13 +26,19 @@ const TextEditor: React.FC = () => {
 
   const { dropdownPosition, updateDropdownPosition } = useDropdownPosition();
 
+  useEffect(() => {
+    if (loading || suggestions.length > 0) {
+      updateDropdownPosition();
+    }
+  }, [loading, suggestions, updateDropdownPosition]);
+
   const focusEditor = () => {
     editorRef.current?.focus();
   };
 
   const handleEditorChange = (newEditorState: EditorState) => {
     setEditorState(newEditorState);
-    
+
     updateSuggestionsState(newEditorState)
     updateDropdownPosition();
   };
@@ -64,6 +70,9 @@ const TextEditor: React.FC = () => {
         if (suggestions.length > 0) {
           handleSuggestionSelected(suggestions[selectedIndex]);
         }
+        if (suggestions.length === 0) {
+          handleSuggestionSelected(activeSuggestion || "");
+        }
         break;
 
       case "Escape":
@@ -85,7 +94,7 @@ const TextEditor: React.FC = () => {
           onChange={handleEditorChange}
           placeholder="Type <> to trigger suggestions"
         />
-        {(loading || (activeSuggestion && suggestions.length > 0)) && (
+        {(loading || activeSuggestion) && (
           <SuggestionDropdown
             suggestions={suggestions}
             selectedIndex={selectedIndex}

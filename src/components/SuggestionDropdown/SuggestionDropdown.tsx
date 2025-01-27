@@ -24,7 +24,7 @@ const SuggestionDropdown: React.FC<SuggestionDropdownProps> = ({
   const adjustedPosition = {
     x: position.x + window.scrollX,
     y: position.y + window.scrollY,
-  }
+  };
 
   return (
     <div
@@ -33,6 +33,9 @@ const SuggestionDropdown: React.FC<SuggestionDropdownProps> = ({
     >
       <ul className="suggestions-list">
         {loading && <li className="loading">Loading...</li>}
+        {!loading && suggestions.length === 0 && (
+          <li className="no-suggestions">No suggestions available</li>
+        )}
         {!loading &&
           suggestions.map((suggestion, index) => (
             <li
