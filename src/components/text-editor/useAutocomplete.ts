@@ -35,7 +35,9 @@ const useAutocomplete = (
         s.toLowerCase().startsWith(currentMatchString.toLowerCase())
       );
 
-      setActiveSuggestion(currentMatchString);
+      if (currentMatchString !== activeSuggestion) {
+        setActiveSuggestion(currentMatchString);
+      }
       setSuggestions(matchingSuggestions);
       setSelectedIndex(0);
     } else {

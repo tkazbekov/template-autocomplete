@@ -10,7 +10,12 @@ const useDropdownPosition = () => {
 
   const updateDropdownPosition = () => {
     const coordinates = getCaretCoordinates();
-    setDropdownPosition(coordinates);
+    if (
+      coordinates.x !== dropdownPosition.x ||
+      coordinates.y !== dropdownPosition.y
+    ) {
+      setDropdownPosition(coordinates);
+    }
   };
 
   return {
