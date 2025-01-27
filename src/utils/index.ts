@@ -19,6 +19,6 @@ export function getMatchString(
   text: string,
   selectionOffset: number
 ): string | null {
-  const match = /<>(.*)$/.exec(text.slice(0, selectionOffset));
+  const match = /<>(\S.*)$/.exec(text.slice(0, selectionOffset));
   return match ? match[1] : null;
 }
