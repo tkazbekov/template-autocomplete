@@ -21,10 +21,15 @@ const SuggestionDropdown: React.FC<SuggestionDropdownProps> = ({
 }) => {
   if (!loading && suggestions.length === 0) return null;
 
+  const adjustedPosition = {
+    x: position.x + window.scrollX,
+    y: position.y + window.scrollY,
+  }
+
   return (
     <div
       className="suggestions-dropdown"
-      style={{ top: position.y, left: position.x }}
+      style={{ top: adjustedPosition.y, left: adjustedPosition.x }}
     >
       <ul className="suggestions-list">
         {loading && <li className="loading">Loading...</li>}
