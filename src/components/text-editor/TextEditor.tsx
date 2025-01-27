@@ -65,7 +65,7 @@ const TextEditor: React.FC = () => {
         break;
 
       case "Enter":
-      case "Tab": // Treat Tab like Enter when suggestions are present
+      case "Tab":
         e.preventDefault();
         if (suggestions.length > 0) {
           handleSuggestionSelected(suggestions[selectedIndex]);

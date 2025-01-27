@@ -1,19 +1,11 @@
+import { words } from "./mock";
 export const fetchSuggestions = (query: string): Promise<string[]> => {
-    const allSuggestions = [
-      "test",
-      "hello",
-      "world",
-      "draft-js",
-      "hello world",
-      "draft-js example",
-    ];
-  
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        const filtered = allSuggestions.filter((s) =>
-          s.toLowerCase().startsWith(query.toLowerCase())
-        );
-        resolve(filtered);
-      }, 500);
-    });
-  };
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      const filtered = (words as string[]).filter((s) =>
+        s.toLowerCase().startsWith(query.toLowerCase())
+      ).slice(0, 3);
+      resolve(filtered);
+    }, 500);
+  });
+};

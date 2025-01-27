@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { EditorState, Modifier, SelectionState } from "draft-js";
 import { getMatchString } from "../../utils";
 import { fetchSuggestions } from "../../api/suggestionsApi";
@@ -23,6 +23,8 @@ const useAutocomplete = (
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
 
+  const debounceTimeout = useRef<number | undefined>(undefined); // Ref to store timeout id, so it persists between renders
+
   const resetAutocompleteState = () => {
     setActiveSuggestion(null);
     setSuggestions([]);
@@ -30,7 +32,7 @@ const useAutocomplete = (
     setLoading(false);
   };
 
-  const updateSuggestionsState = async (editorState: EditorState) => {
+  const updateSuggestionsState = (editorState: EditorState) => {
     const selection = editorState.getSelection();
     const contentState = editorState.getCurrentContent();
 
@@ -51,27 +53,30 @@ const useAutocomplete = (
       return;
     }
 
-    // Ensure the match string is valid and has at least one character
     if (currentMatchString === null || currentMatchString.trim().length === 0) {
       resetAutocompleteState();
       return;
     }
 
-    setLoading(true); // Start loading
-    try {
-      // Fetch suggestions dynamically based on the match string
-      const fetchedSuggestions = await fetchSuggestions(currentMatchString);
-
-      // Update autocomplete state
-      setActiveSuggestion(currentMatchString);
-      setSuggestions(fetchedSuggestions);
-      setSelectedIndex(0);
-    } catch (error) {
-      console.error("Error fetching suggestions:", error);
-      resetAutocompleteState();
-    } finally {
-      setLoading(false); // Stop loading
+    // Clear previous timeout
+    if (debounceTimeout.current) {
+      clearTimeout(debounceTimeout.current);
     }
+
+    debounceTimeout.current = window.setTimeout(async () => {
+      setLoading(true);
+      try {
+        const fetchedSuggestions = await fetchSuggestions(currentMatchString);
+        setActiveSuggestion(currentMatchString);
+        setSuggestions(fetchedSuggestions);
+        setSelectedIndex(0);
+      } catch (error) {
+        console.error("Error fetching suggestions:", error);
+        resetAutocompleteState();
+      } finally {
+        setLoading(false);
+      }
+    }, 300);
   };
 
   const handleSuggestionSelected = (suggestion: string) => {
