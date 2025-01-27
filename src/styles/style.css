@@ -1,10 +1,13 @@
 
 :root {
-    --color-primary: #007bff; /* Blue */
+    --color-primary: #8067CB; /* Purple */
     --color-secondary: #6c757d; /* Gray */
-    --color-background: #f5f5f5; /* Light Gray */
-    --color-text: #333; /* Dark Gray */
+    --color-background: #E5FCF5; /* Light green */
+    --color-text: #0A210F; /* Black */
     --color-danger: #dc3545; /* Red */
+    --color-autocomplete-entry-background: #8067cb; /* Purple */
+    --color-autocomplete-entry-text: var(--color-background); /* Light green */
+
   
     --font-size-small: 0.875rem; /* 14px */
     --font-size-base: 1rem; /* 16px */

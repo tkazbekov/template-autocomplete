@@ -12,5 +12,5 @@
   flex: 1;
   padding: var(--space-small) var(--space-small);
   border: 1px solid #ccc;
-  border-radius: 4px;
+  border-radius: var(--border-radius);
 }
