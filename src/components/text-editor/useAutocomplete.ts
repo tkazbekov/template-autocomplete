@@ -8,7 +8,7 @@ type UseAutocompleteReturn = {
   suggestions: string[];
   selectedIndex: number;
   setSelectedIndex: React.Dispatch<React.SetStateAction<number>>;
-  updateSuggestionsState: (text: string, selectionOffset: number) => void;
+  updateSuggestionsState: (editorState: EditorState) => void;
   handleSuggestionSelected: (suggestion: string) => void;
   handleEscape: () => void;
   loading: boolean;
@@ -30,30 +30,48 @@ const useAutocomplete = (
     setLoading(false);
   };
 
-  const updateSuggestionsState = async (
-    text: string,
-    selectionOffset: number
-  ) => {
-    const currentMatchString = getMatchString(text, selectionOffset);
+  const updateSuggestionsState = async (editorState: EditorState) => {
+    const selection = editorState.getSelection();
+    const contentState = editorState.getCurrentContent();
 
-    if (currentMatchString !== null) {
-      setLoading(true);
-
-      try {
-        const fetchedSuggestions = await fetchSuggestions(currentMatchString);
-        if (currentMatchString !== activeSuggestion) {
-          setActiveSuggestion(currentMatchString);
-        }
-        setSuggestions(fetchedSuggestions);
-        setSelectedIndex(0);
-      } catch (error) {
-        console.error("Failed to fetch suggestions:", error);
-        resetAutocompleteState();
-      } finally {
-        setLoading(false);
-      }
-    } else {
+    if (!selection.isCollapsed()) {
       resetAutocompleteState();
+      return;
+    }
+
+    const anchorKey = selection.getAnchorKey();
+    const block = contentState.getBlockForKey(anchorKey);
+    const text = block.getText();
+    const offset = selection.getAnchorOffset();
+    const textBeforeCaret = text.slice(0, offset);
+
+    const currentMatchString = getMatchString(textBeforeCaret, offset);
+
+    if (currentMatchString === activeSuggestion) {
+      return;
+    }
+
+    // Ensure the match string is valid and has at least one character
+    if (currentMatchString === null || currentMatchString.trim().length === 0) {
+      resetAutocompleteState();
+      return;
+    }
+
+    setLoading(true); // Start loading
+    try {
+      // Fetch suggestions dynamically based on the match string
+      const fetchedSuggestions = await fetchSuggestions(currentMatchString);
+
+      // Update autocomplete state
+      setActiveSuggestion(currentMatchString);
+      setSuggestions(fetchedSuggestions);
+      
+      setSelectedIndex(0);
+    } catch (error) {
+      console.error("Error fetching suggestions:", error);
+      resetAutocompleteState();
+    } finally {
+      setLoading(false); // Stop loading
     }
   };
 

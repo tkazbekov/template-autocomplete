@@ -32,18 +32,8 @@ const TextEditor: React.FC = () => {
 
   const handleEditorChange = (newEditorState: EditorState) => {
     setEditorState(newEditorState);
-
-    const selection = window.getSelection();
-    if (!selection || selection.rangeCount === 0) return;
-
-    const selectionRange = selection.getRangeAt(0);
-    const text =
-      selectionRange.startContainer.textContent?.substring(
-        0,
-        selectionRange.startOffset
-      ) || "";
-
-    updateSuggestionsState(text, selectionRange.startOffset);
+    
+    updateSuggestionsState(newEditorState)
     updateDropdownPosition();
   };
 
