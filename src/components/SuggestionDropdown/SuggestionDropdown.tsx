@@ -1,10 +1,11 @@
 import React from "react";
 import "./SuggestionDropdown.css";
+import { DropdownPosition } from "../../types/common";
 
 interface SuggestionDropdownProps {
   suggestions: string[];
   selectedIndex: number;
-  position: { x: number; y: number };
+  position: DropdownPosition;
   onSelect: (suggestion: string) => void;
   onHover: (index: number) => void;
 }

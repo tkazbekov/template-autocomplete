@@ -1,12 +1,9 @@
 import { useState } from "react";
-import { EditorState } from "draft-js";
 import { getCaretCoordinates } from "../../utils";
+import { DropdownPosition } from "../../types/common";
 
 const useDropdownPosition = () => {
-  const [dropdownPosition, setDropdownPosition] = useState<{
-    x: number;
-    y: number;
-  }>({
+  const [dropdownPosition, setDropdownPosition] = useState<DropdownPosition>({
     x: 0,
     y: 0,
   });
