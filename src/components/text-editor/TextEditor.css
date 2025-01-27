@@ -8,7 +8,7 @@
   padding: var(--space-medium) var(--space-small);
 }
 
-.editor-text {
+.editor {
   flex: 1;
   padding: var(--space-small) var(--space-small);
   border: 1px solid #ccc;

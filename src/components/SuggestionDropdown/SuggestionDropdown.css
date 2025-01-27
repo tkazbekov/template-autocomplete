@@ -1,0 +1,15 @@
+.suggestions-dropdown {
+  background-color: var(--color-secondary);
+  color: white;
+}
+.highlighted {
+  background-color: var(--color-primary);
+  color: white;
+}
+.suggestion-entity {
+  cursor: pointer;
+  padding: 0 .5rem;
+  background-color: #8067CB;
+  color: white;
+  border-radius: 2px;
+}
