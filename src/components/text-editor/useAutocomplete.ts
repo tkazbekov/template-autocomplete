@@ -2,11 +2,21 @@ import { useState } from "react";
 import { EditorState, Modifier, SelectionState } from "draft-js";
 import { getMatchString } from "../../utils";
 
+type UseAutocompleteReturn = {
+  activeSuggestion: string | null;
+  suggestions: string[];
+  selectedIndex: number;
+  setSelectedIndex: React.Dispatch<React.SetStateAction<number>>;
+  updateSuggestionsState: (text: string, selectionOffset: number) => void;
+  handleSuggestionSelected: (suggestion: string) => void;
+  handleEscape: () => void;
+};
+
 const useAutocomplete = (
   editorState: EditorState,
   setEditorState: React.Dispatch<React.SetStateAction<EditorState>>,
   suggestionsSource: string[]
-) => {
+): UseAutocompleteReturn => {
   const [activeSuggestion, setActiveSuggestion] = useState<string | null>(null);
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
